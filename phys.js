@@ -1,6 +1,6 @@
 
 
-var time_modifier = 5e3;
+var time_modifier = 1000;
 var meters_per_pixel = 0.025e8;
 
 var grav = 6.67e-11;
@@ -12,17 +12,21 @@ function setup(){
 	background(51);
 	frameRate(60);
 	
-	earth = new body(200, 200, 600, 0, 5.972e24, 1e-21, 255);
-	antiearth = new body(200, 400, -600, 0, 5.972e24, 1e-21, 255);
+	earth = new body(400, 200, 600, 0, 5.972e24, 1e-21, 255);
+	antiearth = new body(400, 400, -600, 0, 5.972e24, 1e-21, 0);
 	
-	moon = new body(400, 300 - (3.844e8 / meters_per_pixel), 1500, 0, 7.3476e22, 6e-21, 255);
+	moon = new body(400, 165, 3050, 0, 7.3476e22, 6e-21, 175);
     
-    antimoon = new body(200, 150, 2600, 0, 7.3476e22, 6e-21, 0);
+    antimoon = new body(400, 450, -2300, 0, 7.3476e22, 6e-21, 25);
 	
     thing2 = new body(200, 300, 500, 0, 7.3476e22, 1e-19, 175);
     thing3 = new body(600 , 300, -500, 0, 7.3476e22 * 2, 1e-19, 255);
+	
+	me = new body(400, 600, 1000, 0, 7500, 10, 255);
+	me.size = 3;
+	
     
-    bodies.push(thing2, thing3);
+    bodies.push(earth, antiearth, antimoon, moon, me);
     
 
 }
@@ -36,11 +40,12 @@ function draw(){
         for(var b = a + 1; b < bodies.length; b+= 1){
 			if(checkCollision(bodies[a], bodies[b])){
 				bodies[a] = collision(bodies[a], bodies[b]);
-				bodies[a].density /= 1.15;
 				bodies[a].updateSize();
 				bodies.splice(b, 1);
 				b -= 1;
 			} else {
+			stroke(0);
+			line(bodies[a].x, bodies[a].y, bodies[b].x, bodies[b].y);
             tempForce = getForce(bodies[a], bodies[b]);
             bodies[a].updateForce(-1 * tempForce[0], -1 * tempForce[1]);
             bodies[b].updateForce(tempForce[0], tempForce[1]);
